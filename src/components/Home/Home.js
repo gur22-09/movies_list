@@ -84,8 +84,9 @@ class Home extends Component{
         fetch(endpoint)
         .then(result => result.json())
         .then(result => {
+          console.log(result);  
           this.setState({
-            movies: [...this.state.movies, ...result.results],
+            movies: [...result.results],
             heroImg: this.state.heroImage || result.results[0],
             loading: false,
             currentPage: result.page,
@@ -101,8 +102,8 @@ class Home extends Component{
         
         return(
             <div className='rmdb-home'>
-            {this.state.heroImg ? 
-             <div>
+             {this.state.heroImg ? 
+              <div>
                 <HeroImage 
                     image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${this.state.heroImg.backdrop_path}`}
                     title={this.state.heroImg.original_title}
@@ -110,34 +111,11 @@ class Home extends Component{
 
                 />
                 <SearchBar callback={this.searchItems} />
-             </div> : null }
-             
-             <div className='rmdb-home-grid'>
-               <FourColGrid
-                header='Upcoming Movies'
-               >
-               {
-                   this.state.upcoming.map((item,index)=>{
-                       if(index <8){
-                           return (
-                            <MovieThumb
-                                key={index}
-                                clickable={true}
-                                image={item.poster_path ? `${IMAGE_BASE_URL}${POSTER_SIZE}/${item.poster_path}`:'./images/no_image.jpeg'}
-                                movieId={item.id}
-                                movieName={item.original_title}
-                                release={item.release_date}
-                                vote={item.vote_average}
-                                />
-                           )
-                       }
-                   })
-               }
-
-               </FourColGrid>
-               <FourColGrid 
+              </div> : null }
+              <div className='rmdb-home-grid'>
+                <FourColGrid 
                    header={this.state.searchTerm ? `Search Result` : `Popular Movies` }
-               >
+                >
                    {
                        this.state.movies.map((item,index)=>{
                            return (
@@ -154,12 +132,45 @@ class Home extends Component{
                        })
                    }
                </FourColGrid>
-             </div>
+               {this.state.loading ? <Spinner /> : null}
+               {
+                   (this.state.currentPage <= this.state.totalPages && !this.state.loading)?
+                   <LoadMoreBtn text='Load More' onClick={this.loadMoreItems} />
+                   :
+                   null
+               }
+               </div>
+               {
+                 
+                 <div className='rmdb-home-grid'>
+                  <FourColGrid
+                   header='Upcoming Movies'
+                   >
+                  {
+                   this.state.upcoming.map((item,index)=>{
+                       if(index <8){
+                           return (
+                            <MovieThumb
+                                key={index}
+                                clickable={true}
+                                image={item.poster_path ? `${IMAGE_BASE_URL}${POSTER_SIZE}/${item.poster_path}`:'./images/no_image.jpeg'}
+                                movieId={item.id}
+                                movieName={item.original_title}
+                                release={item.release_date}
+                                vote={item.vote_average}
+                                />
+                           )
+                       }
+                   })
+                  }
 
-             <Spinner />
-             <LoadMoreBtn />
+                    </FourColGrid>
+                 </div>
+                }
             </div>
-        )
+           
+        )  
+           
     }
 };
 
