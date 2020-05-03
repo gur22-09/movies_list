@@ -1,0 +1,34 @@
+.rmdb-moviethumb img {
+  width: 100%;
+  height: auto;
+  transition: all 0.3s;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.rmdb-moviethumb{
+  display: relative;
+}
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  opacity: 0.8;
+}
+
+.release-date{
+ 
+  
+  font-size: 1.2rem;
+  margin-left: 10px;
+  font-weight: 800;
+
+}
+.voting-score{
+  border:1px solid #000;
+  font-weight: 500;
+  background-color: #efefef;
+  position: relative;
+  bottom: 30px;
+  left:10px;
+}
