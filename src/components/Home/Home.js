@@ -55,11 +55,11 @@ class Home extends Component{
     loadMoreItems = ()=>{
         let endpoint = '';
         this.setState({loading:true});
-
+        const {currentPage,searchTerm} = this.state; 
         if(this.state.searchTerm === ''){
-            endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${this.state.currentPage + 1}`;
+            endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${currentPage + 1}`;
         }else{
-            endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${this.state.searchTerm}&page=${this.state.currentPage + 1}`;
+            endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${searchTerm}&page=${currentPage + 1}`;
 
         }
 
@@ -75,7 +75,7 @@ class Home extends Component{
             upcoming: [...this.state.upcoming, ...result.results],
         
           });
-          console.log(this.state.upcoming);
+          
         })
         .catch(error => console.error('Error:', error))
     }
@@ -84,7 +84,7 @@ class Home extends Component{
         fetch(endpoint)
         .then(result => result.json())
         .then(result => {
-          console.log(result);  
+            
           this.setState({
             movies: [...result.results],
             heroImg: this.state.heroImage || result.results[0],
@@ -99,25 +99,25 @@ class Home extends Component{
 
 
     render(){
-        
+        const {heroImg, searchTerm,movies,loading,currentPage,totalPages,upcoming} = this.state
         return(
             <div className='rmdb-home'>
-             {this.state.heroImg ? 
+             {heroImg ? 
               <div>
                 <HeroImage 
-                    image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${this.state.heroImg.backdrop_path}`}
-                    title={this.state.heroImg.original_title}
-                    text={this.state.heroImg.overview}
+                    image={`${IMAGE_BASE_URL}${BACKDROP_SIZE}${heroImg.backdrop_path}`}
+                    title={heroImg.original_title}
+                    text={heroImg.overview}
 
                 />
                 <SearchBar callback={this.searchItems} />
               </div> : null }
               <div className='rmdb-home-grid'>
                 <FourColGrid 
-                   header={this.state.searchTerm ? `Search Result` : `Popular Movies` }
+                   header={searchTerm ? `Search Result` : `Trending Movies` }
                 >
                    {
-                       this.state.movies.map((item,index)=>{
+                       movies.map((item,index)=>{
                            return (
                                <MovieThumb
                                 key={index}
@@ -132,12 +132,11 @@ class Home extends Component{
                        })
                    }
                </FourColGrid>
-               {this.state.loading ? <Spinner /> : null}
-               {
-                   (this.state.currentPage <= this.state.totalPages && !this.state.loading)?
-                   <LoadMoreBtn text='Load More' onClick={this.loadMoreItems} />
-                   :
-                   null
+               {loading ? <Spinner /> : null}
+               {currentPage <= totalPages && !loading  ?
+                  <LoadMoreBtn text='...Next' onClick={this.loadMoreItems} />
+                  : 
+                  null
                }
                </div>
                {
@@ -147,8 +146,8 @@ class Home extends Component{
                    header='Upcoming Movies'
                    >
                   {
-                   this.state.upcoming.map((item,index)=>{
-                       if(index <8){
+                   upcoming.filter((item,index)=>index<8).map((item,index)=>{
+                       
                            return (
                             <MovieThumb
                                 key={index}
@@ -161,10 +160,9 @@ class Home extends Component{
                                 />
                            )
                        }
-                   })
+                   )
                   }
-
-                    </FourColGrid>
+                  </FourColGrid>
                  </div>
                 }
             </div>

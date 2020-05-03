@@ -1,15 +1,15 @@
 import React from 'react';
 
+
 import './MovieThumb.css';
 
-const MovieThumb = (props)=>{
+const MovieThumb = ({release,image,vote})=>{
     return (
         <div className='rmdb-moviethumb'>
-         <span className='release-date'>{props.release}</span>
-         <img src={props.image} alt='movie-poster'/>
-         
-          
-          <span className='voting-score'>{props.vote}</span>
+    
+         <span className='release-date'>{release}</span>
+         <img src={image} alt='movie-poster'/>
+         <span className='voting-score'>{vote}</span>
          
          </div>
     );
